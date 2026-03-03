@@ -580,7 +580,7 @@ fi
 dnl  Checking if compiler correctly cast signed to unsigned.
 AC_CACHE_CHECK(if signed to unsigned casting is broken,
 zsh_cv_c_broken_signed_to_unsigned_casting,
-[AC_RUN_IFELSE([AC_LANG_SOURCE([[main(){return((int)(unsigned char)((char) -1) == 255);}]])],[zsh_cv_c_broken_signed_to_unsigned_casting=yes],[zsh_cv_c_broken_signed_to_unsigned_casting=no],[zsh_cv_c_broken_signed_to_unsigned_casting=no])])
+[AC_RUN_IFELSE([AC_LANG_SOURCE([[int main(){return((int)(unsigned char)((char) -1) == 255);}]])],[zsh_cv_c_broken_signed_to_unsigned_casting=yes],[zsh_cv_c_broken_signed_to_unsigned_casting=no],[zsh_cv_c_broken_signed_to_unsigned_casting=no])])
 AH_TEMPLATE([BROKEN_SIGNED_TO_UNSIGNED_CASTING],
 [Define to 1 if compiler incorrectly cast signed to unsigned.])
 if test x$zsh_cv_c_broken_signed_to_unsigned_casting = xyes; then
@@ -976,7 +976,7 @@ else
   [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <sys/types.h>
 
-main() { return sizeof(off_t) < 8; }
+int main() { return sizeof(off_t) < 8; }
 ]])],[zsh_cv_off_t_is_64_bit=yes],[zsh_cv_off_t_is_64_bit=no],[zsh_cv_off_t_is_64_bit=no])])
   if test x$zsh_cv_off_t_is_64_bit = xyes; then
     AC_DEFINE(OFF_T_IS_64_BIT)
@@ -986,7 +986,7 @@ main() { return sizeof(off_t) < 8; }
   [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <sys/types.h>
 
-main() { return sizeof(ino_t) < 8; }
+int main() { return sizeof(ino_t) < 8; }
 ]])],[zsh_cv_ino_t_is_64_bit=yes],[zsh_cv_ino_t_is_64_bit=no],[zsh_cv_ino_t_is_64_bit=no])])
   if test x$zsh_cv_ino_t_is_64_bit = xyes; then
     AC_DEFINE(INO_T_IS_64_BIT)
@@ -1302,7 +1302,8 @@ AH_TEMPLATE([TGETENT_ACCEPTS_NULL],
 AC_CACHE_CHECK(if tgetent accepts NULL,
 zsh_cv_func_tgetent_accepts_null,
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[
-main()
+#include <stdlib.h>
+int main()
 {
     char buf[4096];
     int r1 = tgetent(buf, "vt100");
@@ -1326,7 +1327,8 @@ fi
 AC_CACHE_CHECK(if tgetent returns 0 on success,
 zsh_cv_func_tgetent_zero_success,
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[
-main()
+#include <stdlib.h>
+int main()
 {
     char buf[4096];
     int r1 = tgetent(buf, "!@#$%^&*");
@@ -1763,7 +1765,8 @@ zsh_cv_rlim_t_is_longer,
 #include <sys/time.h>
 #endif
 #include <sys/resource.h>
-main(){struct rlimit r;exit(sizeof(r.rlim_cur) <= sizeof(long));}]])],[zsh_cv_rlim_t_is_longer=yes],[zsh_cv_rlim_t_is_longer=no],[zsh_cv_rlim_t_is_longer=yes])])
+#include <stdlib.h>
+int main(){struct rlimit r;exit(sizeof(r.rlim_cur) <= sizeof(long));}]])],[zsh_cv_rlim_t_is_longer=yes],[zsh_cv_rlim_t_is_longer=no],[zsh_cv_rlim_t_is_longer=yes])])
 if test x$zsh_cv_rlim_t_is_longer = xyes; then
   AC_CACHE_CHECK(if rlim_t is a quad,
   zsh_cv_rlim_t_is_quad_t,
@@ -1773,7 +1776,8 @@ if test x$zsh_cv_rlim_t_is_longer = xyes; then
 #endif
 #include <stdio.h>
 #include <sys/resource.h>
-main() { 
+#include <stdlib.h>
+int main() { 
   struct rlimit r;
   char buf[20];
   r.rlim_cur = 0;
@@ -1795,7 +1799,8 @@ else
 #include <sys/time.h>
 #endif
 #include <sys/resource.h>
-  main(){struct rlimit r;r.rlim_cur=-1;exit(r.rlim_cur<0);}]])],[zsh_cv_type_rlim_t_is_unsigned=yes],[zsh_cv_type_rlim_t_is_unsigned=no],[zsh_cv_type_rlim_t_is_unsigned=no])])
+#include <stdlib.h>
+  int main(){struct rlimit r;r.rlim_cur=-1;exit(r.rlim_cur<0);}]])],[zsh_cv_type_rlim_t_is_unsigned=yes],[zsh_cv_type_rlim_t_is_unsigned=no],[zsh_cv_type_rlim_t_is_unsigned=no])])
   if test x$zsh_cv_type_rlim_t_is_unsigned = xyes; then
     AC_DEFINE(RLIM_T_IS_UNSIGNED)
     DEFAULT_RLIM_T="unsigned $DEFAULT_RLIM_T"
@@ -2174,7 +2179,8 @@ else
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <fcntl.h>
 #include <signal.h>
-main()
+#include <stdlib.h>
+int main()
 {
     char c;
     int fd;
@@ -2215,7 +2221,8 @@ zsh_cv_sys_link,
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <unistd.h>
 #include <fcntl.h>
-main()
+#include <stdlib.h>
+int main()
 {
     int ret;
     char *tmpfile, *newfile;
@@ -2247,7 +2254,8 @@ zsh_cv_sys_killesrch,
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
-main()
+#include <stdlib.h>
+int main()
 {
     int pid = (getpid() + 10000) & 0xffffff;
     while (pid && (kill(pid, 0) == 0 || errno != ESRCH)) pid >>= 1;
@@ -2272,11 +2280,12 @@ if test x$signals_style = xPOSIX_SIGNALS; then
     [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <signal.h>
 #include <unistd.h>
+#include <stdlib.h>
 int child=0;
 void handler(sig)
     int sig;
 {if(sig==SIGCHLD) child=1;}
-main() {
+int main() {
     struct sigaction act;
     sigset_t set;
     int pid, ret;
@@ -2323,7 +2332,8 @@ case "x$zsh_working_tcsetpgrp" in
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
-main() {
+#include <stdlib.h>
+int main() {
     int fd;
     int ret;
     fd=open("/dev/tty", O_RDWR);
@@ -2366,7 +2376,8 @@ if test x$ac_cv_func_getpwnam = xyes; then
     zsh_cv_sys_getpwnam_faked,
     [AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <pwd.h>
-main() {
+#include <stdlib.h>
+int main() {
     struct passwd *pw1, *pw2;
     char buf[1024], name[1024];
     sprintf(buf, "%d:%d", getpid(), rand());
@@ -2693,7 +2704,8 @@ elif test "x$dynamic" = xyes; then
    [AC_RUN_IFELSE([AC_LANG_SOURCE([[/* Test for whether ELF binaries are produced */
 #include <fcntl.h>
 #include <stdlib.h>
-main(argc, argv)
+#include <unistd.h>
+int main(argc, argv)
 int argc;
 char *argv[];
 {
@@ -2858,6 +2870,7 @@ char *zsh_gl_sym_addr ;
 #define dlsym(handle,name) (zsh_gl_sym_addr=0,shl_findsym((shl_t *)&(handle),name,TYPE_UNDEFINED,&zsh_gl_sym_addr), (void *)zsh_gl_sym_addr)
 #define dlerror() 0
 #else
+#include <stdlib.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
@@ -2872,7 +2885,7 @@ char *zsh_gl_sym_addr ;
 
 extern int fred() ;
 
-main()
+int main()
 {
     void * handle ;
     void * symbol ;

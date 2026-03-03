@@ -44,7 +44,7 @@ AC_DEFUN(zsh_64_BIT_TYPE,
 #include <sys/types.h>
 #endif
 
-main()
+int main()
 {
   $1 foo = 0; 
   int bar = (int) foo;
@@ -130,6 +130,7 @@ char *zsh_gl_sym_addr ;
 #define dlsym(handle,name) (zsh_gl_sym_addr=0,shl_findsym((shl_t *)&(handle),name,TYPE_UNDEFINED,&zsh_gl_sym_addr), (void *)zsh_gl_sym_addr)
 #define dlerror() 0
 #else
+#include <stdlib.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
@@ -145,7 +146,7 @@ char *zsh_gl_sym_addr ;
 #define RTLD_GLOBAL 0
 #endif
 
-main()
+int main()
 {
     void *handle1, *handle2;
     void *(*zsh_getaddr1)(), *(*zsh_getaddr2)();
@@ -211,6 +212,7 @@ char *zsh_gl_sym_addr ;
 #define dlsym(handle,name) (zsh_gl_sym_addr=0,shl_findsym((shl_t *)&(handle),name,TYPE_UNDEFINED,&zsh_gl_sym_addr), (void *)zsh_gl_sym_addr)
 #define dlerror() 0
 #else
+#include <stdlib.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
@@ -227,7 +229,7 @@ char *zsh_gl_sym_addr ;
 #endif
 
 
-main()
+int main()
 {
     void *handle1, *handle2;
     int (*fred1)(), (*fred2)();
@@ -286,6 +288,7 @@ char *zsh_gl_sym_addr ;
 #define dlsym(handle,name) (zsh_gl_sym_addr=0,shl_findsym((shl_t *)&(handle),name,TYPE_UNDEFINED,&zsh_gl_sym_addr), (void *)zsh_gl_sym_addr)
 #define dlerror() 0
 #else
+#include <stdlib.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
@@ -301,7 +304,7 @@ char *zsh_gl_sym_addr ;
 #define RTLD_GLOBAL 0
 #endif
 
-main()
+int main()
 {
     void *handle;
     int (*barneysym)();
@@ -355,6 +358,7 @@ char *zsh_gl_sym_addr ;
 #define dlsym(handle,name) (zsh_gl_sym_addr=0,shl_findsym((shl_t *)&(handle),name,TYPE_UNDEFINED,&zsh_gl_sym_addr), (void *)zsh_gl_sym_addr)
 #define dlerror() 0
 #else
+#include <stdlib.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
@@ -370,7 +374,7 @@ char *zsh_gl_sym_addr ;
 #define RTLD_GLOBAL 0
 #endif
 
-main()
+int main()
 {
     void *handle;
     int (*barneysym)();
@@ -442,8 +446,9 @@ char *zsh_gl_sym_addr ;
 #ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL 0
 #endif
+#include <stdlib.h>
 
-main()
+int main()
 {
     void *handle;
     int (*barneysym)();
@@ -509,8 +514,9 @@ char *zsh_gl_sym_addr ;
 #ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL 0
 #endif
+#include <stdlib.h>
 
-main()
+int main()
 {
     void *handle;
     int (*fredsym)();
